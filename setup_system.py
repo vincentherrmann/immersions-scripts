@@ -4,9 +4,9 @@ import sys
 
 def install(package):
     if type(package) is str:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", package])
     else:
-        subprocess.check_call([sys.executable, "-m", "pip", "install"] + package)
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--user"] + package)
     print("installed", package)
 
 try:
