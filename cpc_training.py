@@ -32,6 +32,8 @@ prediction_steps = 12
 batch_size = 64
 lr = 1e-4
 
+training_set_location = '../data/MelodicProgressiveHouseMix_train'
+validation_set_location = '../data/MelodicProgressiveHouseMix_test'
 logs_location = '../logs'
 snapshot_location = '../snapshots'
 ngrok = 'misc/ngrok'
@@ -67,13 +69,13 @@ prediction_length = encoder.receptive_field + (prediction_steps - 1) * encoder.d
 
 print("item length:", item_length)
 
-dataset = AudioDataset('train_dataset',
+dataset = AudioDataset(training_set_location,
                        item_length=item_length,
                        unique_length=prediction_steps * encoder.downsampling_factor)
-validation_set = AudioDataset('test_dataset',
+print("dataset length:", len(dataset))
+validation_set = AudioDataset(validation_set_location,
                               item_length=item_length,
                               unique_length=prediction_steps * encoder.downsampling_factor)
-print("dataset length:", len(dataset))
 print("validation set length:", len(validation_set))
 
 dataset.dummy_load = False
