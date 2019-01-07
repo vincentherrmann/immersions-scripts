@@ -13,11 +13,6 @@ def install(package):
         print("error while installing", package)
 
 try:
-    import torch
-except:
-    install(['torch', 'torchvision'])
-
-try:
     import librosa as lr
 except:
     install('librosa')
