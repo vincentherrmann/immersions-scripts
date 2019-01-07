@@ -36,7 +36,7 @@ training_set_location = '../data/MelodicProgressiveHouseMix_train'
 validation_set_location = '../data/MelodicProgressiveHouseMix_test'
 logs_location = '../logs'
 snapshot_location = '../snapshots'
-ngrok = 'misc/ngrok'
+ngrok = '../misc/ngrok'
 
 encoder_params = encoder_default_dict
 encoder_params["channel_count"] = [encoding_size for _ in range(5)]
