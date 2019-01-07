@@ -38,6 +38,10 @@ logs_location = '../logs'
 snapshot_location = '../snapshots'
 ngrok = '../misc/ngrok'
 
+#print("start tensorboard")
+#subprocess.check_call(['tensorboard', '--logdir', logs_location, '--host', '0.0.0.0', '--port', '6007', '&'])
+#subprocess.check_call([ngrok, 'http', '6007', '&'])
+
 encoder_params = encoder_default_dict
 encoder_params["channel_count"] = [encoding_size for _ in range(5)]
 encoder = AudioEncoder(encoder_params)
@@ -115,10 +119,6 @@ logger = TensorboardLogger(log_interval=20,
                            background_function=background_func,
                            background_interval=5000)
 trainer.logger = logger
-
-print("start tensorboard")
-subprocess.check_call(['tensorboard', '--logdir', logs_location, '--host', '0.0.0.0', '--port', '6007', '&'])
-subprocess.check_call([ngrok, 'http', '6007', '&'])
 
 print("first validation...")
 trainer.training_step = 0
