@@ -14,7 +14,7 @@ try:
     from audio_dataset import *
     from audio_model import *
     from contrastive_estimation_training import *
-except
+except:
     sys.path.append('../constrastive-predictive-coding-audio')
     from audio_dataset import *
     from audio_model import *
