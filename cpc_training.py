@@ -117,8 +117,8 @@ logger = TensorboardLogger(log_interval=20,
 trainer.logger = logger
 
 print("start tensorboard")
-subprocess.call(['tensorboard', '--logdir', logs_location, '--host', '0.0.0.0', '--port', '6007', '&'])
-subprocess.call([ngrok, 'http', '6007', '&'])
+subprocess.call(['tensorboard', '--logdir', logs_location, '--host', '0.0.0.0', '--port', '6007'])
+subprocess.call([ngrok, 'http', '6007'])
 
 print("first validation...")
 trainer.training_step = 0
