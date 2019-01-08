@@ -139,7 +139,7 @@ def main():
 
     print("start training")
     trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
-                  ontinue_training_at_step=continue_training_at_step, num_workers=4)
+                  continue_training_at_step=continue_training_at_step, num_workers=4)
 
 
 if __name__ == '__main__':
