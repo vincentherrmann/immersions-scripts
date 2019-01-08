@@ -50,7 +50,7 @@ def main():
     encoder_params["channel_count"] = [args.encoding_size for _ in range(5)]
     encoder = AudioEncoder(encoder_params)
 
-    ar_model = AudioGRUModel(input_size=args.encoding_size, hidden_size=ar_code_size)
+    ar_model = AudioGRUModel(input_size=args.encoding_size, hidden_size=args.ar_code_size)
     pc_model = AudioPredictiveCodingModel(encoder=encoder,
                                           autoregressive_model=ar_model,
                                           enc_size=args.encoding_size,
@@ -72,7 +72,7 @@ def main():
 
     continue_training_at_step = 0
     try:
-        pc_model, newest_snapshot = snapshot_location.load_latest_snapshot()
+        pc_model, newest_snapshot = snapshot_manager.load_latest_snapshot()
         encoder = pc_model.encoder
         ar_model = pc_model.autoregressive_model
         pc_model.to(dev)
