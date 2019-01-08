@@ -133,9 +133,10 @@ def main():
                                background_interval=5000)
     trainer.logger = logger
 
-    print("first validation...")
-    trainer.training_step = 0
-    logger.validate(trainer.training_step)
+    if continue_training_at_step == 0:
+        print("first validation...")
+        trainer.training_step = 0
+        logger.validate(trainer.training_step)
 
     print("start training")
     trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
