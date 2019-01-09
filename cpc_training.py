@@ -6,6 +6,8 @@ import sys
 import torch
 import subprocess
 import datetime
+import torch
+from torch import autograd
 
 parser = argparse.ArgumentParser(description='Contrastive Predictive Coding Training')
 parser.add_argument('--encoding-size', default=512, type=int)
@@ -20,6 +22,7 @@ parser.add_argument('--logs-dir', default='../logs', type=str)
 parser.add_argument('--snapshots-dir', default='../snapshots', type=str)
 parser.add_argument('--name', default='model_' + datetime.datetime.today().strftime('%Y-%m-%d') + '_run_0', type=str)
 parser.add_argument('--epochs', default=100, type=int)
+parser.add_argument('--detect_anomalies', default=False, type=bool)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -150,8 +153,13 @@ def main():
         logger.validate(trainer.training_step)
 
     print("start training")
-    trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
-                  continue_training_at_step=continue_training_at_step, num_workers=4)
+    if args.detect_anomalies:
+        with autograd.detect_anomaly:
+            trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
+                          continue_training_at_step=continue_training_at_step, num_workers=4)
+    else:
+        trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
+                      continue_training_at_step=continue_training_at_step, num_workers=4)
 
 
 if __name__ == '__main__':
