@@ -157,8 +157,13 @@ def main():
         print("run with anomaly detection")
         print("start training")
         with autograd.detect_anomaly():
-            trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
-                          continue_training_at_step=continue_training_at_step, num_workers=4)
+            try:
+                trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
+                              continue_training_at_step=continue_training_at_step, num_workers=4)
+            except Exception as e:
+                print(e)
+                snapshot_manager.make_snapshot('error')
+                print("error at step", trainer.training_step)
     else:
         print("start training")
         trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
