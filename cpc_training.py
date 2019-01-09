@@ -156,7 +156,7 @@ def main():
     if args.detect_anomalies:
         print("run with anomaly detection")
         print("start training")
-        with autograd.detect_anomaly:
+        with autograd.detect_anomaly():
             trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
                           continue_training_at_step=continue_training_at_step, num_workers=4)
     else:
