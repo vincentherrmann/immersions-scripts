@@ -42,6 +42,17 @@ except:
 dev = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 print("using device", dev)
 
+class CPCLogger(TensorBoardLogger):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.score_meter = AverageMeter()
+
+    def log_loss(self, current_step):
+        self.writer.add_scalar('loss', self.loss_meter.avg, current_step)
+        self.loss_meter.reset()
+        self.writer.add_scalar('max_score', self.score_meter.max, current_step)
+        self.score_meter.reset()
+
 
 def main():
     args = parser.parse_args()
@@ -123,14 +134,14 @@ def main():
                                      trainer.training_step)
         return torch.mean(losses).item(), torch.mean(accuracies).item()
 
-    logger = TensorboardLogger(log_interval=20,
-                               validation_function=dummy_validation_function,
-                               validation_interval=1000,
-                               log_directory=snapshot_manager.current_tb_location,
-                               snapshot_function=snapshot_manager.make_snapshot,
-                               snapshot_interval=5000,
-                               background_function=background_func,
-                               background_interval=5000)
+    logger = CPCLogger(log_interval=20,
+                       validation_function=dummy_validation_function,
+                       validation_interval=1000,
+                       log_directory=snapshot_manager.current_tb_location,
+                       snapshot_function=snapshot_manager.make_snapshot,
+                       snapshot_interval=5000,
+                       background_function=background_func,
+                       background_interval=5000)
     trainer.logger = logger
 
     if continue_training_at_step == 0:
