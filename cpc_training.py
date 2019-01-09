@@ -42,7 +42,7 @@ except:
 dev = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 print("using device", dev)
 
-class CPCLogger(TensorBoardLogger):
+class CPCLogger(TensorboardLogger):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.score_meter = AverageMeter()
