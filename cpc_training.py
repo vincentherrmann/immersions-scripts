@@ -22,7 +22,7 @@ parser.add_argument('--logs-dir', default='../logs', type=str)
 parser.add_argument('--snapshots-dir', default='../snapshots', type=str)
 parser.add_argument('--name', default='model_' + datetime.datetime.today().strftime('%Y-%m-%d') + '_run_0', type=str)
 parser.add_argument('--epochs', default=100, type=int)
-parser.add_argument('--detect_anomalies', default=False, type=bool)
+parser.add_argument('--detect-anomalies', default=False, type=bool)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
