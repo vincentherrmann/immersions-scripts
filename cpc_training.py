@@ -120,7 +120,7 @@ def main():
                                            visible_length=visible_length,
                                            prediction_length=prediction_length,
                                            device=dev,
-                                           regularization=1.)
+                                           regularization=args.regularization)
 
     def background_func(current_step):
         snapshot_manager.upload_latest_files()
@@ -161,7 +161,7 @@ def main():
             try:
                 trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
                               continue_training_at_step=continue_training_at_step,
-                              regularization=args.regularization, num_workers=4)
+                              num_workers=4)
             except Exception as e:
                 print(e)
                 snapshot_manager.make_snapshot('error')
@@ -170,7 +170,7 @@ def main():
         print("start training")
         trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
                       continue_training_at_step=continue_training_at_step,
-                      regularization=args.regularization, num_workers=4)
+                      num_workers=4)
 
 
 if __name__ == '__main__':
