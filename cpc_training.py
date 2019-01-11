@@ -23,6 +23,7 @@ parser.add_argument('--snapshots-dir', default='../snapshots', type=str)
 parser.add_argument('--name', default='model_' + datetime.datetime.today().strftime('%Y-%m-%d') + '_run_0', type=str)
 parser.add_argument('--epochs', default=100, type=int)
 parser.add_argument('--detect-anomalies', default=False, type=bool)
+parser.add_argument('--regularization', default=1.0, type=float)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -159,7 +160,8 @@ def main():
         with autograd.detect_anomaly():
             try:
                 trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
-                              continue_training_at_step=continue_training_at_step, num_workers=4)
+                              continue_training_at_step=continue_training_at_step,
+                              regularization=args.regularization, num_workers=4)
             except Exception as e:
                 print(e)
                 snapshot_manager.make_snapshot('error')
@@ -167,7 +169,8 @@ def main():
     else:
         print("start training")
         trainer.train(batch_size=args.batch_size, epochs=args.epochs, lr=args.lr,
-                      continue_training_at_step=continue_training_at_step, num_workers=4)
+                      continue_training_at_step=continue_training_at_step,
+                      regularization=args.regularization, num_workers=4)
 
 
 if __name__ == '__main__':
