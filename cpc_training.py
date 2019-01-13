@@ -67,7 +67,7 @@ def main():
     encoder_params["channel_count"] = [args.encoding_size for _ in range(5)]
     encoder = AudioEncoder(encoder_params)
 
-    if args.ar_model == 'gru' or args.ar_model == 'GRU'
+    if args.ar_model == 'gru' or args.ar_model == 'GRU':
         ar_model = AudioGRUModel(input_size=args.encoding_size,
                                  hidden_size=args.ar_code_size)
     elif args.ar_model == 'transformer' or args.ar_model == 'attention':
