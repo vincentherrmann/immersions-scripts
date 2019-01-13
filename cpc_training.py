@@ -24,6 +24,7 @@ parser.add_argument('--name', default='model_' + datetime.datetime.today().strft
 parser.add_argument('--epochs', default=100, type=int)
 parser.add_argument('--detect-anomalies', default=False, type=bool)
 parser.add_argument('--regularization', default=1.0, type=float)
+parser.add_argument('--ar-model', default='gru', type=str)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -41,6 +42,7 @@ except:
     sys.path.append('../constrastive-predictive-coding-audio')
     from audio_dataset import *
     from audio_model import *
+    from attention_model import *
     from contrastive_estimation_training import *
 
 dev = 'cuda:0' if torch.cuda.is_available() else 'cpu'
@@ -65,7 +67,18 @@ def main():
     encoder_params["channel_count"] = [args.encoding_size for _ in range(5)]
     encoder = AudioEncoder(encoder_params)
 
-    ar_model = AudioGRUModel(input_size=args.encoding_size, hidden_size=args.ar_code_size)
+    if args.ar_model == 'gru' or args.ar_model == 'GRU'
+        ar_model = AudioGRUModel(input_size=args.encoding_size,
+                                 hidden_size=args.ar_code_size)
+    elif args.ar_model == 'transformer' or args.ar_model == 'attention':
+        ar_model = AttentionModel(channels=args.encoding_size,
+                                  output_size=args.ar_code_size,
+                                  num_layers=2,
+                                  num_heads=8,
+                                  feedforward_size=args.encoding_size,
+                                  seq_length=args.visible_steps)
+    else:
+        raise Exception('no autoregressive mode named ' + args.ar_model)
     pc_model = AudioPredictiveCodingModel(encoder=encoder,
                                           autoregressive_model=ar_model,
                                           enc_size=args.encoding_size,
