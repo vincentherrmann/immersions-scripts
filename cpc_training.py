@@ -7,6 +7,7 @@ import torch
 import subprocess
 import datetime
 import torch
+import threading
 from torch import autograd
 
 parser = argparse.ArgumentParser(description='Contrastive Predictive Coding Training')
@@ -18,6 +19,7 @@ parser.add_argument('--batch_size', default=64, type=int)
 parser.add_argument('--lr', default=1e-4, type=float)
 parser.add_argument('--training-set', default='../data/MelodicProgressiveHouseMix_train', type=str)
 parser.add_argument('--validation-set', default='../data/MelodicProgressiveHouseMix_test', type=str)
+parser.add_argument('--task-set', default='../data/MelodicProgressiveHouse_test', type=str)
 parser.add_argument('--logs-dir', default='../logs', type=str)
 parser.add_argument('--snapshots-dir', default='../snapshots', type=str)
 parser.add_argument('--name', default='model_' + datetime.datetime.today().strftime('%Y-%m-%d') + '_run_0', type=str)
@@ -37,6 +39,7 @@ except:
 try:
     from audio_dataset import *
     from audio_model import *
+    from attention_model import *
     from contrastive_estimation_training import *
 except:
     sys.path.append('../constrastive-predictive-coding-audio')
@@ -125,6 +128,8 @@ def main():
                                   item_length=item_length,
                                   unique_length=prediction_steps * encoder.downsampling_factor)
     print("validation set length:", len(validation_set))
+    task_set = AudioTestingDataset(args.task_set,
+                                   item_length=item_length)
 
     dataset.dummy_load = False
     trainer = ContrastiveEstimationTrainer(model=pc_model,
@@ -149,7 +154,16 @@ def main():
             logger.writer.add_scalar("validation accuracy/step " + str(step),
                                      accuracies[step].item(),
                                      trainer.training_step)
+
+        if not task_thread.isAlive():
+            task_data, task_labels = trainer.calc_test_task_data(batch_size=args.batch_size, num_workers=4)
+            task_thread(target=task_function, args=(task_data, task_labels, trainer.training_step))
         return torch.mean(losses).item(), torch.mean(accuracies).item()
+
+    def task_function(task_data, task_labels, step):
+        task_accuracy = trainer.test_task(task_data, task_labels)
+        logger.writer.add_scalar("task accuracy", task_accuracy, step)
+
 
     logger = CPCLogger(log_interval=20,
                        validation_function=dummy_validation_function,
@@ -160,6 +174,8 @@ def main():
                        background_function=background_func,
                        background_interval=5000)
     trainer.logger = logger
+
+    task_thread = threading.Thread()
 
     if continue_training_at_step == 0:
         print("first validation...")
