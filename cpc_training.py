@@ -141,16 +141,20 @@ def main():
                                            prediction_length=prediction_length,
                                            device=dev,
                                            regularization=args.regularization)
-    task_thread = threading.Thread()
+    #task_thread = threading.Thread()
+    #print(task_thread)
 
     def background_func(current_step):
         snapshot_manager.upload_latest_files()
 
     def dummy_validation_function():
-        if not task_thread.isAlive():
-            print("start task test")
-            task_data, task_labels = trainer.calc_test_task_data(batch_size=args.batch_size, num_workers=4)
-            task_thread = threading.Thread(target=task_function, args=(task_data, task_labels, trainer.training_step))
+        #if not task_thread.isAlive():
+        print("start task test")
+        task_data, task_labels = trainer.calc_test_task_data(batch_size=args.batch_size, num_workers=4)
+        task_thread = threading.Thread(target=task_function,
+                                       args=(task_data, task_labels, trainer.training_step),
+                                       daemon=False)
+        task_thread.start()
 
         losses, accuracies, mean_score = trainer.validate(batch_size=args.batch_size, num_workers=4, max_steps=300)
         print(losses, accuracies, mean_score)
@@ -163,6 +167,7 @@ def main():
                                      accuracies[step].item(),
                                      trainer.training_step)
         return torch.mean(losses).item(), torch.mean(accuracies).item()
+
 
     def task_function(task_data, task_labels, step):
         task_accuracy = trainer.test_task(task_data, task_labels)
