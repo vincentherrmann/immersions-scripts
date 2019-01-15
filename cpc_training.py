@@ -130,11 +130,13 @@ def main():
     print("validation set length:", len(validation_set))
     task_set = AudioTestingDataset(args.task_set,
                                    item_length=item_length)
+    print("task set length:", len(task_set))
 
     dataset.dummy_load = False
     trainer = ContrastiveEstimationTrainer(model=pc_model,
                                            dataset=dataset,
                                            validation_set=validation_set,
+                                           test_task_set=task_set,
                                            visible_length=visible_length,
                                            prediction_length=prediction_length,
                                            device=dev,
@@ -156,6 +158,7 @@ def main():
                                      trainer.training_step)
 
         if not task_thread.isAlive():
+            print("start task test")
             task_data, task_labels = trainer.calc_test_task_data(batch_size=args.batch_size, num_workers=4)
             task_thread(target=task_function, args=(task_data, task_labels, trainer.training_step))
         return torch.mean(losses).item(), torch.mean(accuracies).item()
