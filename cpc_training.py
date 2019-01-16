@@ -69,9 +69,9 @@ def main():
     args = parser.parse_args()
 
     encoder_params = encoder_default_dict
-    encoder_params["channel_count"] = [args.encoding_size for _ in range(5)]
     encoder_params["strides"] = args.strides
     encoder_params["kernel_sizes"] = args.kernel_sizes
+    encoder_params["channel_count"] = [args.encoding_size for _ in range(len(args.strides))]
     encoder = AudioEncoder(encoder_params)
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
