@@ -27,6 +27,8 @@ parser.add_argument('--epochs', default=100, type=int)
 parser.add_argument('--detect-anomalies', default=False, type=bool)
 parser.add_argument('--regularization', default=1.0, type=float)
 parser.add_argument('--ar-model', default='gru', type=str)
+parser.add_argument('--strides', default=[5, 4, 2, 2, 2], nargs='+', type=int)
+parser.add_argument('--kernel-sizes', default=[10, 8, 4, 4, 4], nargs='+', type=int)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -68,6 +70,8 @@ def main():
 
     encoder_params = encoder_default_dict
     encoder_params["channel_count"] = [args.encoding_size for _ in range(5)]
+    encoder_params["strides"] = args.strides
+    encoder_params["kernel_sizes"] = args.kernel_sizes
     encoder = AudioEncoder(encoder_params)
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
