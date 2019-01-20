@@ -30,6 +30,7 @@ parser.add_argument('--ar-model', default='gru', type=str)
 parser.add_argument('--strides', default=[5, 4, 2, 2, 2], nargs='+', type=int)
 parser.add_argument('--kernel-sizes', default=[10, 8, 4, 4, 4], nargs='+', type=int)
 parser.add_argument('--encoder-model', default='waveform', type=str)
+parser.add_argument('--unique-steps', default=1., type=float)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -132,7 +133,7 @@ def main():
 
     dataset = AudioDataset(args.training_set,
                            item_length=item_length,
-                           unique_length=prediction_steps * encoder.downsampling_factor)
+                           unique_length=int(args.unique_steps * encoder.downsampling_factor))
     print("dataset length:", len(dataset))
     validation_set = AudioDataset(args.validation_set,
                                   item_length=item_length,
