@@ -124,7 +124,7 @@ def main():
         print("no previous snapshot found, starting training from scratch")
 
     prediction_steps = pc_model.prediction_steps
-    item_length = encoder.receptive_field + (args.visible_steps + prediction_steps - 1) * encoder.downsampling_factor
+    item_length = encoder.receptive_field + (args.visible_steps + prediction_steps) * encoder.downsampling_factor  # TODO: Why not -1?
     visible_length = encoder.receptive_field + (args.visible_steps - 1) * encoder.downsampling_factor
     prediction_length = encoder.receptive_field + (prediction_steps - 1) * encoder.downsampling_factor
 
