@@ -29,6 +29,7 @@ parser.add_argument('--regularization', default=1.0, type=float)
 parser.add_argument('--ar-model', default='gru', type=str)
 parser.add_argument('--strides', default=[5, 4, 2, 2, 2], nargs='+', type=int)
 parser.add_argument('--kernel-sizes', default=[10, 8, 4, 4, 4], nargs='+', type=int)
+parser.add_argument('--encoder-model', default='waveform', type=str)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -42,12 +43,14 @@ try:
     from audio_dataset import *
     from audio_model import *
     from attention_model import *
+    from scalogram_model import *
     from contrastive_estimation_training import *
 except:
     sys.path.append('../constrastive-predictive-coding-audio')
     from audio_dataset import *
     from audio_model import *
     from attention_model import *
+    from scalogram_model import *
     from contrastive_estimation_training import *
 
 dev = 'cuda:0' if torch.cuda.is_available() else 'cpu'
@@ -68,11 +71,14 @@ class CPCLogger(TensorboardLogger):
 def main():
     args = parser.parse_args()
 
-    encoder_params = encoder_default_dict
-    encoder_params["strides"] = args.strides
-    encoder_params["kernel_sizes"] = args.kernel_sizes
-    encoder_params["channel_count"] = [args.encoding_size for _ in range(len(args.strides))]
-    encoder = AudioEncoder(encoder_params)
+    if args.encoder_model == 'waveform':
+        encoder_params = encoder_default_dict
+        encoder_params["strides"] = args.strides
+        encoder_params["kernel_sizes"] = args.kernel_sizes
+        encoder_params["channel_count"] = [args.encoding_size for _ in range(len(args.strides))]
+        encoder = AudioEncoder(encoder_params)
+    elif args.encoder_model == 'scalogram':
+        encoder = ScalogramEncoder()
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
         ar_model = AudioGRUModel(input_size=args.encoding_size,
