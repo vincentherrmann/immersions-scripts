@@ -32,6 +32,7 @@ parser.add_argument('--kernel-sizes', default=[10, 8, 4, 4, 4], nargs='+', type=
 parser.add_argument('--encoder-model', default='waveform', type=str)
 parser.add_argument('--unique-steps', default=1., type=float)
 parser.add_argument('--prediction-noise', default=0., type=float)
+parser.add_argument('--optimizer', default='Adam', type=str)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -151,6 +152,11 @@ def main():
     print("task set length:", len(task_set))
 
     dataset.dummy_load = False
+    
+    if args.optimizer == 'SGD' or args.optimizer == 'sgd':
+        opt = torch.optim.SGD
+    else:
+        opt = torch.optim.Adam
     trainer = ContrastiveEstimationTrainer(model=pc_model,
                                            dataset=dataset,
                                            validation_set=validation_set,
@@ -159,7 +165,8 @@ def main():
                                            prediction_length=prediction_length,
                                            device=dev,
                                            regularization=args.regularization,
-                                           prediction_noise=args.prediction_noise)
+                                           prediction_noise=args.prediction_noise,
+                                           optimizer=opt)
     #task_thread = threading.Thread()
     #print(task_thread)
 
