@@ -91,6 +91,10 @@ def main():
                                   num_heads=8,
                                   feedforward_size=args.encoding_size,
                                   seq_length=args.visible_steps)
+    elif args.ar_model == 'conv':
+        ar_model = ConvArModel(in_channels=args.encoding_size,
+                               conv_channels=args.ar_code_size,
+                               out_channels=args.ar_code_size)
     else:
         raise Exception('no autoregressive mode named ' + args.ar_model)
     pc_model = AudioPredictiveCodingModel(encoder=encoder,
