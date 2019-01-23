@@ -31,6 +31,7 @@ parser.add_argument('--strides', default=[5, 4, 2, 2, 2], nargs='+', type=int)
 parser.add_argument('--kernel-sizes', default=[10, 8, 4, 4, 4], nargs='+', type=int)
 parser.add_argument('--encoder-model', default='waveform', type=str)
 parser.add_argument('--unique-steps', default=1., type=float)
+parser.add_argument('--prediction-noise', default=0., type=float)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -80,6 +81,8 @@ def main():
         encoder = AudioEncoder(encoder_params)
     elif args.encoder_model == 'scalogram':
         encoder = ScalogramEncoder()
+    elif args.encoder_model == 'seperable' or args.encoder_model == 'seperable-scalogram':
+        encoder = ScalogramSeperableEncoder()
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
         ar_model = AudioGRUModel(input_size=args.encoding_size,
@@ -155,7 +158,8 @@ def main():
                                            visible_length=visible_length,
                                            prediction_length=prediction_length,
                                            device=dev,
-                                           regularization=args.regularization)
+                                           regularization=args.regularization,
+                                           prediction_noise=args.prediction_noise)
     #task_thread = threading.Thread()
     #print(task_thread)
 
