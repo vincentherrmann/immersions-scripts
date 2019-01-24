@@ -33,6 +33,7 @@ parser.add_argument('--encoder-model', default='waveform', type=str)
 parser.add_argument('--unique-steps', default=1., type=float)
 parser.add_argument('--prediction-noise', default=0., type=float)
 parser.add_argument('--optimizer', default='Adam', type=str)
+parser.add_argument('--batch-norm', default=False, type=bool)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -81,9 +82,13 @@ def main():
         encoder_params["channel_count"] = [args.encoding_size for _ in range(len(args.strides))]
         encoder = AudioEncoder(encoder_params)
     elif args.encoder_model == 'scalogram':
-        encoder = ScalogramEncoder()
+        encoder_params = scalogram_encoder_default_dict
+        encoder_params['batch_norm'] = args.batch_norm
+        encoder = ScalogramEncoder(encoder_params)
     elif args.encoder_model == 'seperable' or args.encoder_model == 'seperable-scalogram':
-        encoder = ScalogramSeperableEncoder()
+        encoder_params = scalogram_encoder_default_dict
+        encoder_params['batch_norm'] = args.batch_norm
+        encoder = ScalogramSeperableEncoder(encoder_params)
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
         ar_model = AudioGRUModel(input_size=args.encoding_size,
@@ -98,7 +103,8 @@ def main():
     elif args.ar_model == 'conv':
         ar_model = ConvArModel(in_channels=args.encoding_size,
                                conv_channels=args.ar_code_size,
-                               out_channels=args.ar_code_size)
+                               out_channels=args.ar_code_size,
+                               batch_norm=args.batch_norm)
     else:
         raise Exception('no autoregressive mode named ' + args.ar_model)
     pc_model = AudioPredictiveCodingModel(encoder=encoder,
@@ -152,7 +158,7 @@ def main():
     print("task set length:", len(task_set))
 
     dataset.dummy_load = False
-    
+
     if args.optimizer == 'SGD' or args.optimizer == 'sgd':
         opt = torch.optim.SGD
     else:
