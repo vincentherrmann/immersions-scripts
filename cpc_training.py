@@ -34,6 +34,7 @@ parser.add_argument('--unique-steps', default=1., type=float)
 parser.add_argument('--prediction-noise', default=0., type=float)
 parser.add_argument('--optimizer', default='Adam', type=str)
 parser.add_argument('--batch-norm', default=False, type=bool)
+parser.add_argument('--phase', default=False, type=bool)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -83,10 +84,12 @@ def main():
         encoder = AudioEncoder(encoder_params)
     elif args.encoder_model == 'scalogram':
         encoder_params = scalogram_encoder_default_dict
+        encoder_params['phase'] = args.phase
         encoder_params['batch_norm'] = args.batch_norm
         encoder = ScalogramEncoder(encoder_params)
     elif args.encoder_model == 'seperable' or args.encoder_model == 'seperable-scalogram':
         encoder_params = scalogram_encoder_default_dict
+        encoder_params['phase'] = args.phase
         encoder_params['batch_norm'] = args.batch_norm
         encoder = ScalogramSeperableEncoder(encoder_params)
 
@@ -140,6 +143,8 @@ def main():
 
     prediction_steps = pc_model.prediction_steps
     item_length = encoder.receptive_field + (args.visible_steps + prediction_steps) * encoder.downsampling_factor  # TODO: Why not -1?
+    if args.phase:
+        item_length += encoder_params['hop_length']
     visible_length = encoder.receptive_field + (args.visible_steps - 1) * encoder.downsampling_factor
     prediction_length = encoder.receptive_field + (prediction_steps - 1) * encoder.downsampling_factor
 
