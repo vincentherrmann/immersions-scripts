@@ -35,6 +35,7 @@ parser.add_argument('--prediction-noise', default=0., type=float)
 parser.add_argument('--optimizer', default='Adam', type=str)
 parser.add_argument('--batch-norm', default=False, type=bool)
 parser.add_argument('--phase', default=False, type=bool)
+parser.add_argument('--lowpass-init', default=0., type=float)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -86,12 +87,15 @@ def main():
         encoder_params = scalogram_encoder_default_dict
         encoder_params['phase'] = args.phase
         encoder_params['batch_norm'] = args.batch_norm
+        encoder_params['lowpass_init'] = args.lowpass_init
         encoder = ScalogramEncoder(encoder_params)
     elif args.encoder_model == 'seperable' or args.encoder_model == 'seperable-scalogram':
         encoder_params = scalogram_encoder_default_dict
         encoder_params['phase'] = args.phase
         encoder_params['batch_norm'] = args.batch_norm
-        encoder = ScalogramSeperableEncoder(encoder_params)
+        encoder_params['lowpass_init'] = args.lowpass_init
+        encoder_params['seperable'] = True
+        encoder = ScalogramEncoder(encoder_params)
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
         ar_model = AudioGRUModel(input_size=args.encoding_size,
