@@ -89,12 +89,19 @@ def main():
         encoder_params['batch_norm'] = args.batch_norm
         encoder_params['lowpass_init'] = args.lowpass_init
         encoder = ScalogramEncoder(encoder_params)
-    elif args.encoder_model == 'seperable' or args.encoder_model == 'seperable-scalogram':
+    elif args.encoder_model == 'separable' or args.encoder_model == 'separable-scalogram':
         encoder_params = scalogram_encoder_default_dict
         encoder_params['phase'] = args.phase
         encoder_params['batch_norm'] = args.batch_norm
         encoder_params['lowpass_init'] = args.lowpass_init
-        encoder_params['seperable'] = True
+        encoder_params['separable'] = True
+        encoder = ScalogramEncoder(encoder_params)
+    elif args.encoder_model == 'strided-separable':
+        encoder_params = scalogram_encoder_stride_dict
+        encoder_params['phase'] = args.phase
+        encoder_params['batch_norm'] = args.batch_norm
+        encoder_params['lowpass_init'] = args.lowpass_init
+        encoder_params['separable'] = True
         encoder = ScalogramEncoder(encoder_params)
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
@@ -118,6 +125,7 @@ def main():
                                           autoregressive_model=ar_model,
                                           enc_size=args.encoding_size,
                                           ar_size=args.ar_code_size,
+                                          visible_steps=args.visible_steps,
                                           prediction_steps=args.prediction_steps)
 
     pc_model.to(dev)
