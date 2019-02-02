@@ -237,10 +237,10 @@ def main():
                        background_interval=5000)
     trainer.logger = logger
 
-    if continue_training_at_step == 0:
-        print("first validation...")
-        trainer.training_step = 0
-        logger.validate(trainer.training_step)
+    #if continue_training_at_step == 0:
+    #    print("first validation...")
+    #    trainer.training_step = 0
+    #    logger.validate(trainer.training_step)
 
     print("start training")
     if args.detect_anomalies:
