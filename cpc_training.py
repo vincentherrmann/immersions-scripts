@@ -36,6 +36,7 @@ parser.add_argument('--optimizer', default='Adam', type=str)
 parser.add_argument('--batch-norm', default=False, type=bool)
 parser.add_argument('--phase', default=False, type=bool)
 parser.add_argument('--lowpass-init', default=0., type=float)
+parser.add_argument('--instance-norm', default=False, type=bool)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -87,12 +88,14 @@ def main():
         encoder_params = scalogram_encoder_default_dict
         encoder_params['phase'] = args.phase
         encoder_params['batch_norm'] = args.batch_norm
+        encoder_params['instance_norm'] = args.instance_norm
         encoder_params['lowpass_init'] = args.lowpass_init
         encoder = ScalogramEncoder(encoder_params)
     elif args.encoder_model == 'separable' or args.encoder_model == 'separable-scalogram':
         encoder_params = scalogram_encoder_default_dict
         encoder_params['phase'] = args.phase
         encoder_params['batch_norm'] = args.batch_norm
+        encoder_params['instance_norm'] = args.instance_norm
         encoder_params['lowpass_init'] = args.lowpass_init
         encoder_params['separable'] = True
         encoder = ScalogramEncoder(encoder_params)
@@ -100,6 +103,7 @@ def main():
         encoder_params = scalogram_encoder_stride_dict
         encoder_params['phase'] = args.phase
         encoder_params['batch_norm'] = args.batch_norm
+        encoder_params['instance_norm'] = args.instance_norm
         encoder_params['lowpass_init'] = args.lowpass_init
         encoder_params['separable'] = True
         encoder = ScalogramEncoder(encoder_params)
