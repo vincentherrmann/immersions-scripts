@@ -91,6 +91,7 @@ def main():
         encoder_params['batch_norm'] = args.batch_norm
         encoder_params['instance_norm'] = args.instance_norm
         encoder_params['lowpass_init'] = args.lowpass_init
+        encoder_params['dropout'] = args.dropout
         encoder = ScalogramEncoder(encoder_params)
     elif args.encoder_model == 'separable' or args.encoder_model == 'separable-scalogram':
         encoder_params = scalogram_encoder_default_dict
@@ -99,6 +100,7 @@ def main():
         encoder_params['instance_norm'] = args.instance_norm
         encoder_params['lowpass_init'] = args.lowpass_init
         encoder_params['separable'] = True
+        encoder_params['dropout'] = args.dropout
         encoder = ScalogramEncoder(encoder_params)
     elif args.encoder_model == 'strided-separable':
         encoder_params = scalogram_encoder_stride_dict
@@ -107,6 +109,7 @@ def main():
         encoder_params['instance_norm'] = args.instance_norm
         encoder_params['lowpass_init'] = args.lowpass_init
         encoder_params['separable'] = True
+        encoder_params['dropout'] = args.dropout
         encoder = ScalogramEncoder(encoder_params)
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
@@ -123,7 +126,8 @@ def main():
         ar_model = ConvArModel(in_channels=args.encoding_size,
                                conv_channels=args.ar_code_size,
                                out_channels=args.ar_code_size,
-                               batch_norm=args.batch_norm)
+                               batch_norm=args.batch_norm,
+                               dropout=args.dropout)
     else:
         raise Exception('no autoregressive mode named ' + args.ar_model)
     pc_model = AudioPredictiveCodingModel(encoder=encoder,
