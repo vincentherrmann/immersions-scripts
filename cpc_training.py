@@ -37,6 +37,7 @@ parser.add_argument('--batch-norm', default=False, type=bool)
 parser.add_argument('--phase', default=False, type=bool)
 parser.add_argument('--lowpass-init', default=0., type=float)
 parser.add_argument('--instance-norm', default=False, type=bool)
+parser.add_argument('--dropout', default=0.0, type=float)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
