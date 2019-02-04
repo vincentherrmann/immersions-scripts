@@ -111,6 +111,15 @@ def main():
         encoder_params['separable'] = True
         encoder_params['dropout'] = args.dropout
         encoder = ScalogramEncoder(encoder_params)
+    elif args.encoder_model == 'residual':
+        encoder_params = scalogram_encoder_stride_dict
+        encoder_params['phase'] = args.phase
+        encoder_params['batch_norm'] = args.batch_norm
+        encoder_params['instance_norm'] = args.instance_norm
+        encoder_params['lowpass_init'] = args.lowpass_init
+        encoder_params['separable'] = True
+        encoder_params['dropout'] = args.dropout
+        encoder = ScalogramResidualEncoder(encoder_params)
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
         ar_model = AudioGRUModel(input_size=args.encoding_size,
