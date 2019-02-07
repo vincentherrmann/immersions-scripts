@@ -15,7 +15,7 @@ parser.add_argument('--encoding-size', default=512, type=int)
 parser.add_argument('--ar-code-size', default=256, type=int)
 parser.add_argument('--visible-steps', default=128, type=int)
 parser.add_argument('--prediction-steps', default=12, type=int)
-parser.add_argument('--batch_size', default=64, type=int)
+parser.add_argument('--batch-size', default=64, type=int)
 parser.add_argument('--lr', default=1e-4, type=float)
 parser.add_argument('--training-set', default='../data/MelodicProgressiveHouseMix_train', type=str)
 parser.add_argument('--validation-set', default='../data/MelodicProgressiveHouseMix_test', type=str)
@@ -38,6 +38,7 @@ parser.add_argument('--phase', default=False, type=bool)
 parser.add_argument('--lowpass-init', default=0., type=float)
 parser.add_argument('--instance-norm', default=False, type=bool)
 parser.add_argument('--dropout', default=0.0, type=float)
+parser.add_argument('--file-batch-size', default=1, type=int)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -207,7 +208,8 @@ def main():
                                            device=dev,
                                            regularization=args.regularization,
                                            prediction_noise=args.prediction_noise,
-                                           optimizer=opt)
+                                           optimizer=opt,
+                                           file_batch_size=args.file_batch_size)
     #task_thread = threading.Thread()
     #print(task_thread)
 
