@@ -40,6 +40,7 @@ parser.add_argument('--instance-norm', default=False, type=bool)
 parser.add_argument('--dropout', default=0.0, type=float)
 parser.add_argument('--file-batch-size', default=1, type=int)
 parser.add_argument('--sum-score-steps', default=False, type=bool)
+parser.add_argument('--channel-counts', default=[1, 32, 32, 64, 128, 256, 512], nargs='+', type=int)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -94,6 +95,7 @@ def main():
         encoder_params['instance_norm'] = args.instance_norm
         encoder_params['lowpass_init'] = args.lowpass_init
         encoder_params['dropout'] = args.dropout
+        encoder_params['channel_count'] = args.channel_counts
         encoder = ScalogramEncoder(encoder_params)
     elif args.encoder_model == 'separable' or args.encoder_model == 'separable-scalogram':
         encoder_params = scalogram_encoder_default_dict
@@ -103,6 +105,7 @@ def main():
         encoder_params['lowpass_init'] = args.lowpass_init
         encoder_params['separable'] = True
         encoder_params['dropout'] = args.dropout
+        encoder_params['channel_count'] = args.channel_counts
         encoder = ScalogramEncoder(encoder_params)
     elif args.encoder_model == 'strided-separable':
         encoder_params = scalogram_encoder_stride_dict
@@ -112,6 +115,7 @@ def main():
         encoder_params['lowpass_init'] = args.lowpass_init
         encoder_params['separable'] = True
         encoder_params['dropout'] = args.dropout
+        encoder_params['channel_count'] = args.channel_counts
         encoder = ScalogramEncoder(encoder_params)
     elif args.encoder_model == 'residual':
         encoder_params = scalogram_encoder_stride_dict
@@ -121,6 +125,7 @@ def main():
         encoder_params['lowpass_init'] = args.lowpass_init
         encoder_params['separable'] = True
         encoder_params['dropout'] = args.dropout
+        encoder_params['channel_count'] = args.channel_counts
         encoder = ScalogramResidualEncoder(encoder_params)
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
