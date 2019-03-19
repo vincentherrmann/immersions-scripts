@@ -39,6 +39,7 @@ parser.add_argument('--lowpass-init', default=0., type=float)
 parser.add_argument('--instance-norm', default=False, type=bool)
 parser.add_argument('--dropout', default=0.0, type=float)
 parser.add_argument('--file-batch-size', default=1, type=int)
+parser.add_argument('--sum-score-steps', default=False, type=bool)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -209,7 +210,8 @@ def main():
                                            regularization=args.regularization,
                                            prediction_noise=args.prediction_noise,
                                            optimizer=opt,
-                                           file_batch_size=args.file_batch_size)
+                                           file_batch_size=args.file_batch_size,
+                                           sum_score_over_timesteps=args.sum_score_steps)
     #task_thread = threading.Thread()
     #print(task_thread)
 
