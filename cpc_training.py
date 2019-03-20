@@ -232,15 +232,19 @@ def main():
                                        daemon=False)
         task_thread.start()
 
-        losses, accuracies, mean_score = trainer.validate(batch_size=args.batch_size, num_workers=4, max_steps=300)
+        losses, accuracies, mean_score, mmi_lb = trainer.validate(batch_size=args.batch_size, num_workers=4, max_steps=300)
         print(losses, accuracies, mean_score)
         logger.writer.add_scalar("score mean", mean_score, trainer.training_step)
+        logger.writer.add_scalar("validation mutual information", torch.mean(mmi_lb).item(), trainer.training_step)
         for step in range(losses.shape[0]):
             logger.writer.add_scalar("validation loss/step " + str(step),
                                      losses[step].item(),
                                      trainer.training_step)
             logger.writer.add_scalar("validation accuracy/step " + str(step),
                                      accuracies[step].item(),
+                                     trainer.training_step)
+            logger.writer.add_scalar("validation mutual information/step " + str(step),
+                                     mmi_lb[step].item(),
                                      trainer.training_step)
         return torch.mean(losses).item(), torch.mean(accuracies).item()
 
