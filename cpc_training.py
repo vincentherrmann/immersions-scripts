@@ -229,13 +229,14 @@ def main():
 
     if args.profile:
         trainer.logger = None
-        trainer.max_steps = 20
-        with torch.autograd.profiler.profile() as prof:
+        trainer.max_steps = 10
+        with torch.autograd.profiler.profile(use_cuda=True) as prof:
             print("start training")
             trainer.train(batch_size=args.batch_size, max_steps=20, lr=args.lr,
                           continue_training_at_step=0,
                           num_workers=4)
-        print(prof)
+        prof.key_averages()
+        print(prof.table(sort_by='cuda_time_total'))
         prof.export_chrome_trace('last_profile_trace')
         return
 
