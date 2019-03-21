@@ -43,6 +43,7 @@ parser.add_argument('--sum-score-steps', default=False, type=bool)
 parser.add_argument('--channel-counts', default=[1, 32, 32, 64, 128, 256, 512], nargs='+', type=int)
 parser.add_argument('--scalogram-strides', default=[2, 1, 2, 1, 1, 1], nargs='+', type=int)
 parser.add_argument('--separable', default=False, type=bool)
+parser.add_argument('--profile', default=False, type=bool)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -225,6 +226,19 @@ def main():
                                            sum_score_over_timesteps=args.sum_score_steps)
     #task_thread = threading.Thread()
     #print(task_thread)
+
+    if args.profile:
+        trainer.logger = None
+        trainer.max_steps = 20
+        with torch.autograd.profiler.profile() as prof:
+            print("start training")
+            trainer.train(batch_size=args.batch_size, max_steps=20, lr=args.lr,
+                          continue_training_at_step=0,
+                          num_workers=4)
+        print(prof)
+        prof.export_chrome_trace('last_profile_trace')
+        return
+
 
     def background_func(current_step):
         snapshot_manager.upload_latest_files()
