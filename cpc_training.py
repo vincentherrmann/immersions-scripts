@@ -41,6 +41,8 @@ parser.add_argument('--dropout', default=0.0, type=float)
 parser.add_argument('--file-batch-size', default=1, type=int)
 parser.add_argument('--sum-score-steps', default=False, type=bool)
 parser.add_argument('--channel-counts', default=[1, 32, 32, 64, 128, 256, 512], nargs='+', type=int)
+parser.add_argument('--scalogram-strides', feault=[2, 1, 2, 1, 1, 1], nargs='+', type=int)
+parser.add_argument('--separable', default=False, type=bool)
 
 try:
     from colab_utilities import GCSManager, SnapshotManager
@@ -123,10 +125,13 @@ def main():
         encoder_params['batch_norm'] = args.batch_norm
         encoder_params['instance_norm'] = args.instance_norm
         encoder_params['lowpass_init'] = args.lowpass_init
-        encoder_params['separable'] = True
+        encoder_params['separable'] = args.separable
         encoder_params['dropout'] = args.dropout
         encoder_params['channel_count'] = args.channel_counts
         encoder = ScalogramResidualEncoder(encoder_params)
+    elif args.encoder_model == 'resnet':
+        encoder_params = scalogram_encoder_resnet_dict
+        encoder_params['separable'] = args.separable
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
         ar_model = AudioGRUModel(input_size=args.encoding_size,
