@@ -41,7 +41,7 @@ parser.add_argument('--dropout', default=0.0, type=float)
 parser.add_argument('--file-batch-size', default=1, type=int)
 parser.add_argument('--sum-score-steps', default=False, type=bool)
 parser.add_argument('--channel-counts', default=[1, 32, 32, 64, 128, 256, 512], nargs='+', type=int)
-parser.add_argument('--scalogram-strides', feault=[2, 1, 2, 1, 1, 1], nargs='+', type=int)
+parser.add_argument('--scalogram-strides', default=[2, 1, 2, 1, 1, 1], nargs='+', type=int)
 parser.add_argument('--separable', default=False, type=bool)
 
 try:
