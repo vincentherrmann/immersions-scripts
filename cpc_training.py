@@ -132,6 +132,7 @@ def main():
     elif args.encoder_model == 'resnet':
         encoder_params = scalogram_encoder_resnet_dict
         encoder_params['separable'] = args.separable
+        encoder = ScalogramResidualEncoder(encoder_params)
 
     if args.ar_model == 'gru' or args.ar_model == 'GRU':
         ar_model = AudioGRUModel(input_size=args.encoding_size,
