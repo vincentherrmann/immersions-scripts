@@ -189,8 +189,6 @@ def main():
     item_length = encoder.receptive_field + (args.visible_steps + prediction_steps) * encoder.downsampling_factor  # TODO: Why not -1?
     if args.phase:
         item_length += encoder_params['hop_length']
-    visible_length = encoder.receptive_field + (args.visible_steps - 1) * encoder.downsampling_factor
-    prediction_length = encoder.receptive_field + (prediction_steps - 1) * encoder.downsampling_factor
 
     print("item length:", item_length)
 
@@ -216,8 +214,6 @@ def main():
                                            dataset=dataset,
                                            validation_set=validation_set,
                                            test_task_set=task_set,
-                                           visible_length=visible_length,
-                                           prediction_length=prediction_length,
                                            device=dev,
                                            regularization=args.regularization,
                                            prediction_noise=args.prediction_noise,
@@ -231,7 +227,7 @@ def main():
         trainer.logger = None
         trainer.max_steps = 1
         print("start training with profile")
-        prof = trainer.train(batch_size=args.batch_size, max_steps=20, lr=args.lr,
+        prof = trainer.train(batch_size=args.batch_size, max_steps=10, lr=args.lr,
                       continue_training_at_step=0,
                       num_workers=4, profile=True)
         prof.key_averages()
